@@ -6,11 +6,11 @@ use std::{collections::HashMap, hash::Hash};
 /// Locally cached key-value store
 pub struct Cache<K: Eq + Hash + Clone, V> {
     /// Items within this cache
-    pub inner: HashMap<K, V>,
+    inner: HashMap<K, V>,
     /// The oldest 20% of items in cache
-    pub old: Vec<K>,
+    old: Vec<K>,
     /// Optional indented length; actual maximum length may be up to 20% higher
-    pub max: Option<usize>,
+    max: Option<usize>,
 }
 
 impl<K: Eq + Hash + Clone, V> Cache<K, V> {
@@ -46,6 +46,16 @@ impl<K: Eq + Hash + Clone, V> Cache<K, V> {
         // Prune and insert
         self.prune();
         self.inner.insert(k, v)
+    }
+
+    /// Retrieves value from cache if it exists
+    pub fn get(&self, k: &K) -> Option<&V> {
+        self.inner.get(k)
+    }
+
+    /// Sets [Self::max] value
+    pub fn max(&mut self, value: impl Into<usize>) {
+        self.max = Some(value.into())
     }
 
     /// Prunes cache to [Self::max] if it's 20% over
