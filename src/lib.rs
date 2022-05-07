@@ -1,3 +1,5 @@
-mod cache;
+pub mod message;
 
-pub use cache::Cache;
+mod errors;
+
+pub use errors::{Error, Result};

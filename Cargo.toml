@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 log = "0.4"
+aes-gcm-siv = "0.10"
+tokio = { version = "1", features = ["full"] }
