@@ -54,18 +54,20 @@ pub type PacketBytes = Vec<u8>;
 /// Alias to a decrypted version of [PacketBytes]
 pub type MessageBytes = Vec<u8>;
 
+/// Two-way messaging constructs, allowing encoding/encryption and decoding/decryption
 pub trait Message: Sized {
-    /// TODO: document
+    /// Decodes message bytes which have been decrypted into self; used in [Self::from_packet]
     fn from_msg(msg_bytes: MessageBytes) -> Result<Self>;
 
-    /// TODO: document
+    /// Encodes self into a message ready to be encrypted and sent; used in [Self::to_packet]
     fn to_msg(&self) -> Result<MessageBytes>;
 
-    /// TODO: document
+    /// Fully decrypts and decodes a packet from start to finish, resulting in self
     fn from_packet(key: &Key, packet_bytes: PacketBytes) -> Result<Self> {
         Self::from_msg(key.decrypt(packet_bytes)?)
     }
-    /// TODO: document
+
+    /// Fully encodes and encrypts self into a packet ready to be sent
     fn to_packet(&self, key: &Key) -> Result<PacketBytes> {
         key.encrypt(self.to_msg()?)
     }
