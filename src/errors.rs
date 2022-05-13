@@ -9,6 +9,8 @@ pub enum Error {
     Bind(io::Error),
     Send(io::Error),
     Receive(io::Error),
+    Length,
+    Encryption(aes_gcm_siv::aead::Error),
 }
 
 impl fmt::Display for Error {
@@ -17,6 +19,14 @@ impl fmt::Display for Error {
             Self::Bind(err) => write!(f, "Whilst binding, {}", err),
             Self::Send(err) => write!(f, "Whilst sending, {}", err),
             Self::Receive(err) => write!(f, "Whilst receiving, {}", err),
+            Self::Length => write!(f, "Incoming message is too short"),
+            Self::Encryption(err) => write!(f, "Couldn't encrypt/decrypt, {}", err),
         }
+    }
+}
+
+impl From<aes_gcm_siv::aead::Error> for Error {
+    fn from(err: aes_gcm_siv::aead::Error) -> Self {
+        Self::Encryption(err)
     }
 }
