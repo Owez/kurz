@@ -1,6 +1,8 @@
 mod action;
+mod request;
 
 pub use action::{Action, ToAction};
+pub use request::Request;
 
 use crate::{Error, Result};
 use aes_gcm_siv::aead::{Aead, NewAead};
@@ -56,7 +58,7 @@ pub type MessageBytes = Vec<u8>;
 
 /// Two-way messaging constructs, allowing encoding/encryption and decoding/decryption
 pub trait Message: Sized {
-    /// Decodes message bytes which have been decrypted into self; used in [Self::from_packet]
+    /// Decodes message into self; used in [Self::from_packet]
     fn from_msg(msg_bytes: MessageBytes) -> Result<Self>;
 
     /// Encodes self into a message ready to be encrypted and sent; used in [Self::to_packet]

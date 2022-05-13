@@ -11,6 +11,7 @@ pub enum Error {
     Receive(io::Error),
     Length,
     Encryption(aes_gcm_siv::aead::Error),
+    Action(u8),
 }
 
 impl fmt::Display for Error {
@@ -21,6 +22,7 @@ impl fmt::Display for Error {
             Self::Receive(err) => write!(f, "Whilst receiving, {}", err),
             Self::Length => write!(f, "Incoming message is too short"),
             Self::Encryption(err) => write!(f, "Couldn't encrypt/decrypt, {}", err),
+            Self::Action(unknown) => write!(f, "Unknown message action #{}", unknown),
         }
     }
 }

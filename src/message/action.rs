@@ -1,3 +1,5 @@
+use crate::{Error, Result};
+
 /// Intention of any given message
 pub enum Action {
     /// Allows peers to test connections to each other
@@ -10,6 +12,16 @@ pub enum Action {
     /// 2. Peer B decodes the request and sends back a ping-pong response
     /// 3. Peer A knows it can connect to Peer B if the response can be decrypted
     PingPong,
+}
+
+impl Action {
+    /// Converts action byte into known action if valid
+    pub fn from_byte(action_byte: u8) -> Result<Self> {
+        Ok(match action_byte {
+            0 => Self::PingPong,
+            unknown => return Err(Error::Action(unknown)),
+        })
+    }
 }
 
 impl From<Action> for u8 {
