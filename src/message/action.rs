@@ -3,6 +3,7 @@
 use crate::{Error, Result};
 
 /// Intention of any given message
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum Action {
     /// Allows peers to test connections to each other
     ///
@@ -42,5 +43,21 @@ pub trait ToAction {
     /// Provides action byte of what the message corresponds to
     fn action_byte(&self) -> u8 {
         self.action().into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn byte_to_action() -> Result<()> {
+        assert_eq!(Action::from_byte(0)?, Action::PingPong);
+        Ok(())
+    }
+
+    #[test]
+    fn action_to_byte() {
+        assert_eq!(u8::from(Action::PingPong), 0);
     }
 }

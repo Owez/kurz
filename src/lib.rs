@@ -1,3 +1,5 @@
+//! Distributed key-value store based on gossip networking
+//! 
 //! # Specification
 //!
 //! ## Messaging

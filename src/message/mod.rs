@@ -91,3 +91,5 @@ pub trait Message: Sized {
         key.encrypt(self.to_msg()?)
     }
 }
+
+// TODO: encryption tests
