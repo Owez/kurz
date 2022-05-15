@@ -1,3 +1,17 @@
+//! Messaging constructs which enable communication between peers
+//!
+//! - Cryptography
+//!   - [Key]
+//! - Packets
+//!   - [PacketBytes]
+//!   - [MessageBytes]
+//! - Actions
+//!   - [Action]
+//!   - [ToAction]
+//! - Messaging
+//!   - [Message]
+//!   - [Request]
+
 mod action;
 mod request;
 

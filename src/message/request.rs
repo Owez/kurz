@@ -1,8 +1,7 @@
+use super::{Action, Message, MessageBytes, ToAction};
 use crate::{Error, Result};
 
-use super::{Action, Message, MessageBytes, ToAction};
-
-/// TODO: document
+/// Requests which are sent to other peers on the network, optionally expecting a response
 pub enum Request {
     // See [Action::PingPong]
     PingPong,
