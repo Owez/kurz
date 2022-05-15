@@ -11,12 +11,15 @@
 //! - Messaging
 //!   - [Message]
 //!   - [Request]
+//!   - [Response]
 
 mod action;
 mod request;
+mod response;
 
 pub use action::{Action, ToAction};
 pub use request::Request;
+pub use response::Response;
 
 use crate::{Error, Result};
 use aes_gcm_siv::aead::{Aead, NewAead};

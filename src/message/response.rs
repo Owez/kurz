@@ -1,15 +1,15 @@
-//! Contains [Request] and implementations, see item-level docs for more info
+//! Contains [Response] and implementations, see item-level docs for more info
 
 use super::{Action, Message, MessageBytes, ToAction};
 use crate::{Error, Result};
 
-/// Requests which are sent to other peers on the network, optionally expecting a response
-pub enum Request {
+/// Response optionally sent back from a peer after a request was received
+pub enum Response {
     /// See [Action::PingPong]
     PingPong,
 }
 
-impl ToAction for Request {
+impl ToAction for Response {
     fn action(&self) -> Action {
         match self {
             Self::PingPong => Action::PingPong,
@@ -17,7 +17,7 @@ impl ToAction for Request {
     }
 }
 
-impl Message for Request {
+impl Message for Response {
     fn from_msg(msg_bytes: MessageBytes) -> Result<Self> {
         // Verify length
         if msg_bytes.len() < 1 {

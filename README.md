@@ -12,13 +12,10 @@ Heavily in-development and not at all suitable for production; hardly any featur
 - Actions and a ToAction trait
 - Encryption automatically implemented for the Message trait
 - Requests implementing ToAction and Message traits
+- Response implementing ToAction and Message traits
 
 ### Roadmap
 
 - [ ] Structure called Kurz to represent ourself
 - [ ] Structure called Peer to represent others
 - [ ] Document new Kurz and Peer in specification
-- [ ] Response which mirrors Action and implements Request
-  - [ ] Implement
-  - [ ] Document
-- [ ] PingPong action implementation for Request and Response
