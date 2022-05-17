@@ -31,3 +31,26 @@ mod peer;
 
 pub use errors::{Error, Result};
 pub use peer::Peer;
+
+use message::{Key, Message};
+use tokio::net::UdpSocket;
+
+/// Representation of ourself on the network
+pub struct Kurz {
+    /// Socket for communication
+    pub socket: UdpSocket,
+    /// Encryption key
+    pub key: Key,
+}
+
+impl Kurz {
+    /// Sends provided `msg` to `peer`
+    pub async fn send(&self, peer: &Peer, msg: impl Message) -> Result<()> {
+        let packet = msg.to_packet(&self.key)?;
+        self.socket
+            .send_to(&packet[..], peer.addr)
+            .await
+            .map_err(|err| Error::Send(err))?;
+        Ok(())
+    }
+}
