@@ -1,3 +1,5 @@
+//! Contains [Error], [Result], and implementations; see item-level docs for more info
+
 use std::{fmt, io};
 
 /// Alias for results which may end up as an operation error

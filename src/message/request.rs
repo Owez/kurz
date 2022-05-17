@@ -1,4 +1,4 @@
-//! Contains [Request] and implementations, see item-level docs for more info
+//! Contains [Request] and implementations; see item-level docs for more info
 
 use super::{Action, Message, MessageBytes, ToAction};
 use crate::{Error, Result};

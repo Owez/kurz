@@ -1,5 +1,5 @@
 //! Distributed key-value store based on gossip networking
-//! 
+//!
 //! # Specification
 //!
 //! ## Messaging
@@ -22,9 +22,12 @@
 //! 2. Encrypted message data
 //!
 //! Because every network operating with kurz is private, encryption is extremely simple. Each peer is passed the network's encryption key at startup, which should be stored somewhere safe. This secret network encryption key is known across all peers and is used to fully [authenticate](https://auth0.com/docs/get-started/identity-fundamentals/authentication-and-authorization) any peer.
+// TODO: kurz and peer docs
 
 pub mod message;
 
 mod errors;
+mod peer;
 
 pub use errors::{Error, Result};
+pub use peer::Peer;

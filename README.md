@@ -18,4 +18,3 @@ Heavily in-development and not at all suitable for production; hardly any featur
 - [ ] Structure called Kurz to represent ourself
 - [ ] Structure called Peer to represent others
 - [ ] Document new Kurz and Peer in specification
-- [ ] Encryption + full packet cycle testing

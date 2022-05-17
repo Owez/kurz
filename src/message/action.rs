@@ -1,4 +1,4 @@
-//! Contains [Action] and implementations, see item-level docs for more info
+//! Contains [Action] and implementations; see item-level docs for more info
 
 use crate::{Error, Result};
 
