@@ -92,4 +92,24 @@ pub trait Message: Sized {
     }
 }
 
-// TODO: encryption tests
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use aes_gcm_siv::Key;
+
+    #[test]
+    fn cyclic() {
+        // Setup
+        let data = vec![
+            3, 45, 4, 34, 5, 4, 35, 3, 45, 43, 54, 35, 34, 4, 4, 4, 4, 44, 3, 3, 3, 2, 21, 12, 43,
+            5, 54, 65, 67, 56, 7, 65, 74, 44,
+        ];
+        let key = Key::from_slice(b"an example very very secret key.");
+        let key = Key(*key);
+
+        // Encrypt & decrypt
+        let encrypted = key.encrypt(data.clone()).unwrap();
+        let decrypted = key.decrypt(encrypted).unwrap();
+        assert_eq!(decrypted, data);
+    }
+}
