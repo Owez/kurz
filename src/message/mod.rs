@@ -33,6 +33,7 @@ const NONCE_LEN: usize = 12;
 type KeyNonce = [u8; NONCE_LEN];
 
 /// Encryption key for AES256-based packets
+#[derive(Clone)]
 pub struct Key(aes_gcm_siv::aead::Key<Aes256GcmSiv>);
 
 impl Key {

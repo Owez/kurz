@@ -12,9 +12,8 @@ Heavily in-development and not at all suitable for production; hardly any featur
 - Actions and a ToAction trait
 - Encryption automatically implemented for the Message trait
 - Request and Response implementing ToAction and Message traits
+- Kurz and Peer representing peers
 
 ### Roadmap
 
-- [ ] Structure called Kurz to represent ourself
-- [ ] Structure called Peer to represent others
 - [ ] Document new Kurz and Peer in specification
