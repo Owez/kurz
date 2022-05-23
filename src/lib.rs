@@ -75,47 +75,54 @@ impl Kurz {
     }
 
     /// Listens and responds to network requests
-    pub async fn listen(&mut self) -> Result<()> {
+    pub async fn listen(&self) {
         /// 1KiB maximum message length
         const MAX_BUF: usize = 1024;
 
-        // Constantly receive
         let mut buf = [0; MAX_BUF];
-        // TODO: make this a tokio thing
-        loop {
-            // Get packet and address
-            let (len, addr) = match self.socket.recv_from(&mut buf).await {
-                Ok(val) => val,
-                Err(err) => {
-                    warn!("Couldn't receive message, {}", err);
+
+        // Get values
+        let socket = Arc::clone(&self.socket);
+        let key = self.key.clone();
+        let peers = Arc::clone(&self.peers);
+
+        // Listen handler
+        tokio::spawn(async move {
+            loop {
+                // Get packet and address
+                let (len, addr) = match socket.recv_from(&mut buf).await {
+                    Ok(val) => val,
+                    Err(err) => {
+                        warn!("Couldn't receive message, {}", err);
+                        continue;
+                    }
+                };
+
+                // Ensure length isn't too large
+                if len > MAX_BUF {
+                    trace!("Provided message length was too long");
+                    Self::rep_req_bad(Arc::clone(&peers), addr);
                     continue;
                 }
-            };
 
-            // Ensure length isn't too large
-            if len > MAX_BUF {
-                trace!("Provided message length was too long");
-                Self::rep_req_bad(Arc::clone(&self.peers), addr);
-                continue;
-            }
+                // Get values
+                let socket = Arc::clone(&socket);
+                let key = key.clone();
+                let peers = Arc::clone(&peers);
+                let packet: PacketBytes = buf[..len].to_vec();
 
-            // Get values for handler
-            let socket = Arc::clone(&self.socket);
-            let key = self.key.clone();
-            let peers = Arc::clone(&self.peers);
-            let packet: PacketBytes = buf[..len].to_vec();
-
-            // Spin up handler
-            tokio::spawn(async move {
-                match Self::listen_handle(socket, key, Arc::clone(&peers), addr, packet).await {
-                    Ok(_) => (),
-                    Err(err) => {
-                        trace!("Error whilst handling message, {}", err);
-                        Self::rep_req_bad(peers, addr);
+                // Spin up handler
+                tokio::spawn(async move {
+                    match Self::listen_handle(socket, key, Arc::clone(&peers), addr, packet).await {
+                        Ok(_) => (),
+                        Err(err) => {
+                            trace!("Error whilst handling message, {}", err);
+                            Self::rep_req_bad(peers, addr);
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     }
 
     /// Sends debug `msg` to provided `peer` regardless of validity

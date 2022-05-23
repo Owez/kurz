@@ -10,5 +10,6 @@ async fn main() {
         .unwrap();
 
     println!("Listening..");
-    kurz.listen().await.unwrap();
+    kurz.listen().await;
+    loop{}
 }
