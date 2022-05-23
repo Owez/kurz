@@ -56,6 +56,24 @@ pub struct Kurz {
 }
 
 impl Kurz {
+    // TODO: document
+    pub async fn new(key: &[u8; 32]) -> Result<Self> {
+        Self::new_custom("0.0.0.0:7667".parse().unwrap(), key).await
+    }
+
+    // TODO: document
+    pub async fn new_custom(addr: SocketAddr, key: &[u8; 32]) -> Result<Self> {
+        let socket = UdpSocket::bind(addr)
+            .await
+            .map_err(|err| Error::Bind(err))?;
+
+        Ok(Self {
+            socket: Arc::new(socket),
+            key: Key::new(key),
+            peers: Arc::new(Mutex::new(vec![])),
+        })
+    }
+
     /// Listens and responds to network requests
     pub async fn listen(&mut self) -> Result<()> {
         /// 1KiB maximum message length
@@ -112,7 +130,7 @@ impl Kurz {
         }
     }
 
-    /// Sends provided `msg` to `peer` statically
+    /// Sends provided `msg` to `addr` statically
     async fn send(
         socket: &UdpSocket,
         key: &Key,

@@ -37,6 +37,10 @@ type KeyNonce = [u8; NONCE_LEN];
 pub struct Key(aes_gcm_siv::aead::Key<Aes256GcmSiv>);
 
 impl Key {
+    pub(crate) fn new(input: &[u8; 32]) -> Self {
+        Self(*aes_gcm_siv::Key::from_slice(input))
+    }
+
     /// Encrypts [MessageBytes] into [PacketBytes]
     pub fn encrypt(&self, msg_bytes: MessageBytes) -> Result<PacketBytes> {
         let cipher = self.cipher();
