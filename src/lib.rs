@@ -81,6 +81,7 @@ impl Kurz {
 
         // Constantly receive
         let mut buf = [0; MAX_BUF];
+        // TODO: make this a tokio thing
         loop {
             // Get packet and address
             let (len, addr) = match self.socket.recv_from(&mut buf).await {
@@ -117,6 +118,11 @@ impl Kurz {
         }
     }
 
+    /// Sends debug `msg` to provided `peer` regardless of validity
+    pub async fn send_debug(&self, peer: &Peer, msg: impl Message) -> Result<()> {
+        Self::send_static(&self.socket, &self.key, peer.addr, msg).await
+    }
+
     /// Handles a packet provided to [Self::listen] asynchronously
     async fn listen_handle(
         socket: Socket,
@@ -126,12 +132,12 @@ impl Kurz {
         packet: PacketBytes,
     ) -> Result<()> {
         match Request::from_packet(&key, packet)? {
-            Request::PingPong => Self::send(&socket, &key, addr, Response::PingPong).await,
+            Request::PingPong => Self::send_static(&socket, &key, addr, Response::PingPong).await,
         }
     }
 
     /// Sends provided `msg` to `addr` statically
-    async fn send(
+    async fn send_static(
         socket: &UdpSocket,
         key: &Key,
         addr: SocketAddr,
