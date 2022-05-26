@@ -101,7 +101,6 @@ impl Kurz {
                 // Ensure length isn't too large
                 if len > MAX_BUF {
                     trace!("Provided message length was too long");
-                    Self::rep_req_bad(Arc::clone(&peers), addr);
                     continue;
                 }
 
@@ -117,7 +116,6 @@ impl Kurz {
                         Ok(_) => (),
                         Err(err) => {
                             trace!("Error whilst handling message, {}", err);
-                            Self::rep_req_bad(peers, addr);
                         }
                     }
                 });
@@ -156,10 +154,5 @@ impl Kurz {
             .await
             .map_err(|err| Error::Send(err))?;
         Ok(())
-    }
-
-    /// Removes reputation from a peer because of a badly sent request
-    fn rep_req_bad(peers: Peers, addr: SocketAddr) {
-        todo!()
     }
 }
