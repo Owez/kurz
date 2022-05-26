@@ -7,8 +7,8 @@ async fn main() {
     // Create peers
     println!("Creating peers..");
     let key = b"11111111111111111111111111111111";
-    let uno = Kurz::new(key).await.unwrap();
-    let dos = Kurz::new_custom("0.0.0.0:7668".parse().unwrap(), key)
+    let uno: Kurz<(), ()> = Kurz::new(key).await.unwrap();
+    let dos: Kurz<(), ()> = Kurz::new_custom("0.0.0.0:7668".parse().unwrap(), key)
         .await
         .unwrap();
 

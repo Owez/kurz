@@ -28,16 +28,17 @@ pub mod message;
 
 mod errors;
 mod peer;
+mod value;
 
 pub use errors::{Error, Result};
-use log::{trace, warn};
 pub use peer::Peer;
-
-use message::{Key, Message, Request, Response};
-use std::{net::SocketAddr, sync::Arc};
-use tokio::{net::UdpSocket, sync::Mutex};
+pub use value::Value;
 
 use crate::message::PacketBytes;
+use log::{trace, warn};
+use message::{Key, Message, Request, Response};
+use std::{collections::HashMap, net::SocketAddr, sync::Arc};
+use tokio::{net::UdpSocket, sync::Mutex};
 
 /// Peer list wrapped in an arc mutex, allowing lenient borrowing
 pub(crate) type Peers = Arc<Mutex<Vec<Peer>>>;
@@ -46,16 +47,18 @@ pub(crate) type Peers = Arc<Mutex<Vec<Peer>>>;
 pub(crate) type Socket = Arc<UdpSocket>;
 
 /// Representation of ourself on the network
-pub struct Kurz {
+pub struct Kurz<K, V> {
     /// Socket for communication
     pub socket: Socket,
     /// Encryption key
     pub key: Key,
     /// Peers we know of
     pub peers: Peers,
+    /// Key-value store
+    pub store: HashMap<K, Value<V>>,
 }
 
-impl Kurz {
+impl<K, V> Kurz<K, V> {
     // TODO: document
     pub async fn new(key: &[u8; 32]) -> Result<Self> {
         Self::new_custom("0.0.0.0:7667".parse().unwrap(), key).await
@@ -71,6 +74,7 @@ impl Kurz {
             socket: Arc::new(socket),
             key: Key::new(key),
             peers: Arc::new(Mutex::new(vec![])),
+            store: HashMap::new()
         })
     }
 
