@@ -46,6 +46,9 @@ pub(crate) type Peers = Arc<Mutex<Vec<Peer>>>;
 /// UDP-based socket wrapped in an arc for lenient borrowing
 pub(crate) type Socket = Arc<UdpSocket>;
 
+/// Store containing hashmap of wrapped values
+pub(crate) type Store<K: Send, V: Send> = Arc<Mutex<HashMap<K, Value<V>>>>;
+
 /// Representation of ourself on the network
 pub struct Kurz<K: Send, V: Send> {
     /// Socket for communication
@@ -55,7 +58,7 @@ pub struct Kurz<K: Send, V: Send> {
     /// Peers we know of
     pub peers: Peers,
     /// Key-value store
-    pub store: HashMap<K, Value<V>>,
+    pub store: Store<K, V>,
 }
 
 impl<K: Send, V: Send> Kurz<K, V> {
@@ -74,7 +77,7 @@ impl<K: Send, V: Send> Kurz<K, V> {
             socket: Arc::new(socket),
             key: Key::new(key),
             peers: Arc::new(Mutex::new(vec![])),
-            store: HashMap::new(),
+            store: Arc::new(Mutex::new(HashMap::new())),
         })
     }
 
