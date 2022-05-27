@@ -1,6 +1,6 @@
 # Kurz
 
-Distributed key-value store based on gossip networking
+Event streaming and key-value store built on gossiping
 
 ## Status
 
@@ -17,3 +17,8 @@ Heavily in-development and not at all suitable for production; hardly any featur
 ### Roadmap
 
 - [ ] Document new Kurz and Peer in specification
+- [ ] Finish KeySend request
+  - [ ] Encoding
+  - [ ] Decoding
+  - [ ] Handling incoming
+  - [ ] Testing/examples

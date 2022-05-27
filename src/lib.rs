@@ -140,6 +140,7 @@ impl<K: Send, V: Send> Kurz<K, V> {
         socket: Socket,
         key: Key,
         peers: Peers,
+        // TODO: get store here
         addr: SocketAddr,
         packet: PacketBytes,
     ) -> Result<()> {
