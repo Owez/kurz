@@ -47,7 +47,7 @@ pub(crate) type Peers = Arc<Mutex<Vec<Peer>>>;
 pub(crate) type Socket = Arc<UdpSocket>;
 
 /// Store containing hashmap of wrapped values
-pub(crate) type Store<K: Send, V: Send> = Arc<Mutex<HashMap<K, Value<V>>>>;
+pub(crate) type Store<K, V> = Arc<Mutex<HashMap<K, Value<V>>>>;
 
 /// Representation of ourself on the network
 pub struct Kurz<K: Send, V: Send> {
