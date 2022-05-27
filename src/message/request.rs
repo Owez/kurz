@@ -1,24 +1,27 @@
 //! Contains [Request] and implementations; see item-level docs for more info
 
 use super::{Action, Message, MessageBytes, ToAction};
-use crate::{Error, Result};
+use crate::{Error, Result, Value};
 
 /// Requests which are sent to other peers on the network, optionally expecting a response
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub enum Request {
+pub enum Request<K: Send, V: Send> {
     /// See [Action::PingPong]
     PingPong,
+    /// See [Action::KeySend]
+    KeySend((K, Value<V>)),
 }
 
-impl ToAction for Request {
+impl<K: Send, V: Send> ToAction for Request<K, V> {
     fn action(&self) -> Action {
         match self {
             Self::PingPong => Action::PingPong,
+            Self::KeySend(_) => Action::KeySend,
         }
     }
 }
 
-impl Message for Request {
+impl<K: Send, V: Send> Message for Request<K, V> {
     fn from_msg(msg_bytes: MessageBytes) -> Result<Self> {
         // Verify length
         if msg_bytes.len() < 1 {
@@ -27,13 +30,14 @@ impl Message for Request {
 
         // Decode
         match Action::from_byte(msg_bytes[0])? {
-            Action::PingPong => Ok(Self::PingPong),
+            Action::PingPong => Ok(Self::PingPong),Action::KeySend=>todo!("decode key send")
         }
     }
 
     fn to_msg(&self) -> Result<MessageBytes> {
         Ok(match self {
             Self::PingPong => vec![self.action_byte()],
+            Self::KeySend(_) => todo!("encode key send"),
         })
     }
 }
@@ -44,19 +48,22 @@ mod tests {
 
     #[test]
     fn actions() -> Result<()> {
-        assert_eq!(Request::PingPong.action_byte(), 0);
+        let req: Request<(), ()> = Request::PingPong;
+        assert_eq!(req.action_byte(), 0);
         Ok(())
     }
 
     #[test]
     fn pingpong_encode() -> Result<()> {
-        assert_eq!(Request::PingPong.to_msg()?, vec![0]);
+        let req: Request<(), ()> = Request::PingPong;
+        assert_eq!(req.to_msg()?, vec![0]);
         Ok(())
     }
 
     #[test]
     fn pingpong_decode() -> Result<()> {
-        assert_eq!(Request::from_msg(vec![0])?, Request::PingPong);
+        let req: Request<(), ()> = Request::from_msg(vec![0])?;
+        assert_eq!(req, Request::PingPong);
         Ok(())
     }
 }

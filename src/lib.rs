@@ -47,7 +47,7 @@ pub(crate) type Peers = Arc<Mutex<Vec<Peer>>>;
 pub(crate) type Socket = Arc<UdpSocket>;
 
 /// Representation of ourself on the network
-pub struct Kurz<K, V> {
+pub struct Kurz<K: Send, V: Send> {
     /// Socket for communication
     pub socket: Socket,
     /// Encryption key
@@ -58,7 +58,7 @@ pub struct Kurz<K, V> {
     pub store: HashMap<K, Value<V>>,
 }
 
-impl<K, V> Kurz<K, V> {
+impl<K: Send, V: Send> Kurz<K, V> {
     // TODO: document
     pub async fn new(key: &[u8; 32]) -> Result<Self> {
         Self::new_custom("0.0.0.0:7667".parse().unwrap(), key).await
@@ -74,7 +74,7 @@ impl<K, V> Kurz<K, V> {
             socket: Arc::new(socket),
             key: Key::new(key),
             peers: Arc::new(Mutex::new(vec![])),
-            store: HashMap::new()
+            store: HashMap::new(),
         })
     }
 
@@ -140,8 +140,10 @@ impl<K, V> Kurz<K, V> {
         addr: SocketAddr,
         packet: PacketBytes,
     ) -> Result<()> {
-        match Request::from_packet(&key, packet)? {
+        let req: Request<K, V> = Request::from_packet(&key, packet)?;
+        match req {
             Request::PingPong => Self::send_static(&socket, &key, addr, Response::PingPong).await,
+            Request::KeySend((k, value)) => todo!("handle incoming key send"),
         }
     }
 

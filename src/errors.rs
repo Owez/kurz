@@ -2,6 +2,8 @@
 
 use std::{fmt, io};
 
+use crate::message::Action;
+
 /// Alias for results which may end up as an operation error
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -14,6 +16,7 @@ pub enum Error {
     Length,
     Encryption(aes_gcm_siv::aead::Error),
     Action(u8),
+    ActionUnimplemented(Action),
 }
 
 impl fmt::Display for Error {
@@ -25,6 +28,11 @@ impl fmt::Display for Error {
             Self::Length => write!(f, "Incoming message is too short"),
             Self::Encryption(err) => write!(f, "Couldn't encrypt/decrypt, {}", err),
             Self::Action(unknown) => write!(f, "Unknown message action #{}", unknown),
+            Self::ActionUnimplemented(action) => write!(
+                f,
+                "The {} action isn't implemented for this request/response",
+                action
+            ),
         }
     }
 }

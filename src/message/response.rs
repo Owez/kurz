@@ -6,6 +6,7 @@ use crate::{Error, Result};
 /// Response optionally sent back from a peer after a request was received
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum Response {
+    // NOTE: this will have `<K:Send,V:Send>` soon
     /// See [Action::PingPong]
     PingPong,
 }
@@ -28,6 +29,7 @@ impl Message for Response {
         // Decode
         match Action::from_byte(msg_bytes[0])? {
             Action::PingPong => Ok(Self::PingPong),
+            unimplemented => Err(Error::ActionUnimplemented(unimplemented))
         }
     }
 

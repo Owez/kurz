@@ -27,6 +27,7 @@ async fn main() {
         if count % 1000 == 0 {
             println!("Sending ping-pong request #{}", count);
         }
-        dos.send_debug(&uno_peer, Request::PingPong).await.unwrap();
+        let req: Request<(), ()> = Request::PingPong;
+        dos.send_debug(&uno_peer, req).await.unwrap();
     }
 }

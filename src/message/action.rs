@@ -1,6 +1,7 @@
 //! Contains [Action] and implementations; see item-level docs for more info
 
 use crate::{Error, Result};
+use std::fmt;
 
 /// Intention of any given message
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -15,6 +16,8 @@ pub enum Action {
     /// 2. Peer B decodes the request and sends back a ping-pong response
     /// 3. Peer A knows it can connect to Peer B if the response can be decrypted
     PingPong,
+    /// TODO: document
+    KeySend,
 }
 
 impl Action {
@@ -31,6 +34,16 @@ impl From<Action> for u8 {
     fn from(action: Action) -> Self {
         match action {
             Action::PingPong => 0,
+            Action::KeySend => 1,
+        }
+    }
+}
+
+impl fmt::Display for Action {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::PingPong => write!(f, "ping-pong test"),
+            Self::KeySend => write!(f, "key send"),
         }
     }
 }
