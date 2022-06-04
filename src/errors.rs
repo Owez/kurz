@@ -2,6 +2,8 @@
 
 use std::{fmt, io};
 
+use bincode::error::{DecodeError, EncodeError};
+
 use crate::message::Action;
 
 /// Alias for results which may end up as an operation error
@@ -17,6 +19,8 @@ pub enum Error {
     Encryption(aes_gcm_siv::aead::Error),
     Action(u8),
     ActionUnimplemented(Action),
+    Encode(EncodeError),
+    Decode(DecodeError),
 }
 
 impl fmt::Display for Error {
@@ -33,6 +37,8 @@ impl fmt::Display for Error {
                 "The {} action isn't implemented for this request/response",
                 action
             ),
+            Self::Encode(err) => write!(f, "Couldn't encode message, {}", err),
+            Self::Decode(err) => write!(f, "Couldn't decode message, {}", err),
         }
     }
 }
@@ -40,5 +46,17 @@ impl fmt::Display for Error {
 impl From<aes_gcm_siv::aead::Error> for Error {
     fn from(err: aes_gcm_siv::aead::Error) -> Self {
         Self::Encryption(err)
+    }
+}
+
+impl From<EncodeError> for Error {
+    fn from(err: EncodeError) -> Self {
+        Self::Encode(err)
+    }
+}
+
+impl From<DecodeError> for Error {
+    fn from(err: DecodeError) -> Self {
+        Self::Decode(err)
     }
 }

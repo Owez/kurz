@@ -35,6 +35,7 @@ pub use peer::Peer;
 pub use value::Value;
 
 use crate::message::PacketBytes;
+use bincode::{Decode, Encode};
 use log::{trace, warn};
 use message::{Key, Message, Request, Response};
 use std::{collections::HashMap, net::SocketAddr, sync::Arc};
@@ -50,7 +51,7 @@ pub(crate) type Socket = Arc<UdpSocket>;
 pub(crate) type Store<K, V> = Arc<Mutex<HashMap<K, Value<V>>>>;
 
 /// Representation of ourself on the network
-pub struct Kurz<K: Send, V: Send> {
+pub struct Kurz<K: Send + Encode + Decode, V: Send + Encode + Decode> {
     /// Socket for communication
     pub socket: Socket,
     /// Encryption key
@@ -61,13 +62,13 @@ pub struct Kurz<K: Send, V: Send> {
     pub store: Store<K, V>,
 }
 
-impl<K: Send, V: Send> Kurz<K, V> {
-    // TODO: document
+impl<K: Send + Encode + Decode, V: Send + Encode + Decode> Kurz<K, V> {
+    /// Creates new kurz instance locked with a `key` and assigned to the default address
     pub async fn new(key: &[u8; 32]) -> Result<Self> {
         Self::new_custom("0.0.0.0:7667".parse().unwrap(), key).await
     }
 
-    // TODO: document
+    /// Creates new kurz instance assigned to a custom address and locked with the `key` provided
     pub async fn new_custom(addr: SocketAddr, key: &[u8; 32]) -> Result<Self> {
         let socket = UdpSocket::bind(addr)
             .await

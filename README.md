@@ -18,7 +18,7 @@ Heavily in-development and not at all suitable for production; hardly any featur
 
 - [ ] Document new Kurz and Peer in specification
 - [ ] Finish KeySend request
-  - [ ] Encoding
-  - [ ] Decoding
+  - [x] Encoding
+  - [x] Decoding
   - [ ] Handling incoming
   - [ ] Testing/examples
